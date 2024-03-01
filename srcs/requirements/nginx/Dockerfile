@@ -1,8 +1,16 @@
-FROM alpine:3.16
-RUN apk update
-RUN apk upgrade 
-RUN apk --no-cache nginx
-EXPOSE 443
-CMD ["nginx", "-g", "deamon off;"]
+FROM alpine:3.19
+
+RUN apk update; apk add --no-cache nginx openssl fish
+
+RUN	mkdir -p /etc/nginx/ssl
+RUN	openssl req -x509 -newkey rsa:4096 -keyout /etc/nginx/ssl/yberrim.42.fr.key -out /etc/nginx/ssl/yberrim.42.fr.crt -sha256 -days 3650 -nodes\
+			-subj "/C=MA/ST=Tanger-Tetouan-Al Hoceima/L=Martil/O=1337/OU=1337MED/CN=inception"
+
+
+
+COPY	conf/nginx.conf /etc/nginx/http.d/default.conf
+
+# Command to start Nginx
+CMD ["nginx", "-g", "daemon off;"]
 
 
