@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3'
 
 services:
   nginx:
@@ -6,22 +6,9 @@ services:
     build:
       context: /home/yberrim/project/srcs/requirements/nginx
       dockerfile: Dockerfile
-    image: nginx
-    restart: always
-    volumes:
-      - wordpress_vol:/var/www/html/wordpress
-      - adminer_vol:/var/www/html/adminer
-      - tempo_vol:/var/www/html/tempo
-    networks:
-      - inception
-    depends_on: []  # Empty array as nginx currently does not depend on any other service.
     ports:
       - "443:443"
-
-networks:
-  inception:
-
-volumes:
-  wordpress_vol:
-  adminer_vol:
-  tempo_vol:
+    volumes:
+      - ./requirements/nginx/conf:/etc/nginx/conf
+      - ./requirements/nginx/tools:/etc/nginx/tools
+    restart: always
