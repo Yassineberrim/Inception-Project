@@ -4,11 +4,11 @@ services:
   nginx:
     container_name: nginx
     build:
-      context: /home/yberrim/project/srcs/requirements/nginx
+      context: /home/yberrim/project/srcs/requirements/nginx/
       dockerfile: Dockerfile
     ports:
       - "443:443"
-    volumes:
-      - ./requirements/nginx/conf:/etc/nginx/conf
-      - ./requirements/nginx/tools:/etc/nginx/tools
+    # volumes:
+    #   - ./requirements/nginx/conf:/etc/nginx/conf
+    #   - ./requirements/nginx/tools:/etc/nginx/tools
     restart: always
