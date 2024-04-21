@@ -6,6 +6,7 @@ RUN	mkdir -p /etc/nginx/ssl
 
 RUN mkdir /var/www/html
 
+#after that a will add path wordpress 
 RUN echo Hello > /var/www/html/index.html
 RUN	openssl req -x509 -newkey rsa:4096 -keyout /etc/nginx/ssl/yberrim.42.fr.key -out /etc/nginx/ssl/yberrim.42.fr.crt -sha256 -days 3650 -nodes\
 			-subj "/C=MA/ST=Tanger-Tetouan-Al Hoceima/L=Martil/O=1337/OU=1337MED/CN=inception"

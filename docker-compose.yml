@@ -1,10 +1,10 @@
-version: '3'
+# version: '3'
 
 services:
   nginx:
     container_name: nginx
     build:
-      context: /home/yberrim/Desktop/Inception-Project/srcs/requirements/nginx/
+      context: /home/yberrim/project/srcs/requirements/nginx/
       dockerfile: Dockerfile
     ports:
       - "443:443"
@@ -12,3 +12,8 @@ services:
       - ./requirements/nginx/conf:/etc/nginx/conf
       - ./requirements/nginx/tools:/etc/nginx/tools
     restart: always
+  mariadb:
+    container_name: mariadb
+    build: 
+      context: /home/yberrim/project/srcs/requirements/mariadb/
+      dockerfile: Dockerfile
