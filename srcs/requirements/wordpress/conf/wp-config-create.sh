@@ -12,3 +12,4 @@ wp config create --dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASSWORD --dbh
 wp core install --url=$Domain --title=$Title --admin_user=$Admin_user --admin_password=$Admin_password --admin_email=$Admin_email --allow-root
 
 #create a mew wordpress 
+wp core install --url=$Domain --title=$Title --admin_user=$Admin_user --admin_password=$Admin_password --admin_email=$Admin_email --allow-root

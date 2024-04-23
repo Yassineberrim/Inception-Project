@@ -12,9 +12,9 @@ services:
       - "443:443"
     volumes:
       - wordpress:/var/www/html
-    restart: always
     networks:
       - inception
+    restart: always
 
   mariadb:
     container_name: mariadb
@@ -25,9 +25,9 @@ services:
       - srcs/.env
     volumes:
       - mariadb:/var/lib/mysql
-    restart: always
     networks:
       - inception
+    restart: always
 
 networks:
   inception:
