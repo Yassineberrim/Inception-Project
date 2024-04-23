@@ -15,3 +15,4 @@ EXPOSE 3306
 ENTRYPOINT ["sh", "/create_db.sh"]
 
 CMD ["mariadbd", "--user=root"]
+# RUN mysql -u root -pYourPassword -e 'use your_database_name'
