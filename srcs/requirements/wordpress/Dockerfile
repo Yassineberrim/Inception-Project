@@ -1,6 +1,6 @@
 FROM debian:bookworm
 
-RUN apt update && apt install -y curl php-fpm php-mysql mariadb-client && apt clean -y
+RUN apt update && apt install -y curl php-fpm php-mysql mariadb-client
 
 COPY conf/wp-config-create.sh /usr/local/bin/install_wordpress
 RUN chmod +x /usr/local/bin/install_wordpress

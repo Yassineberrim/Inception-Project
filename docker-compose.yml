@@ -1,38 +1,64 @@
-version: '3.7'
+version: '3'
 
 services:
   nginx:
-    container_name: nginx
     build:
-      context: /home/yberrim/project/srcs/requirements/nginx/
+      context: /home/yberrim/project/srcs/requirements/nginx
       dockerfile: Dockerfile
-    env_file:
-      - srcs/.env
+    container_name: nginx
+    depends_on:
+      - wordpress
     ports:
       - "443:443"
+    networks:
+      - inception
     volumes:
-      - wordpress:/var/www/html
+      - ./requirements/nginx/conf/:/etc/nginx/http.d/
+      - ./requirements/nginx/tools:/etc/nginx/ssl/
+      - wp-volume:/var/www/
+    restart: always
+
+  mariadb:
+    build:
+      context: /home/yberrim/project/srcs/requirements/mariadb
+      dockerfile: Dockerfile
+    container_name: mariadb
+    env_file:
+      - /home/yberrim/project/srcs/.env
+    ports:
+      - "3306:3306"
     networks:
       - inception
     restart: always
 
-  mariadb:
-    container_name: mariadb
+  wordpress:
     build:
-      context: /home/yberrim/project/srcs/requirements/mariadb/
+      context: /home/yberrim/project/srcs/requirements/wordpress
       dockerfile: Dockerfile
     env_file:
-      - srcs/.env
-    volumes:
-      - mariadb:/var/lib/mysql
+      - /home/yberrim/project/srcs/.env
+    container_name: wordpress
+    depends_on:
+      - mariadb
+    restart: always
     networks:
       - inception
-    restart: always
+    volumes:
+      - wp-volume:/var/www/
+
+volumes:
+  wp-volume:
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/wordpress
+
+  db-volume:
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/mariadb
 
 networks:
   inception:
     driver: bridge
-
-volumes:
-  wordpress:
-  mariadb:

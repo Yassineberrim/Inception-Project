@@ -1,18 +1,26 @@
-FROM debian:bookworm
+FROM alpine:3.16
 
-# install mariadb
-RUN apt-get -y update && apt-get -y install mariadb-server
+ARG DB_NAME\
+DB_USER\
+DB_PASS
 
-# change the mariadb config to listen on all network avialable
-RUN sed -i "s|bind-address = 127.0.0.1|bind-address = 0.0.0.0|g" /etc/mysql/mariadb.conf.d/50-server.cnf
+RUN apk update && apk add --no-cache mariadb mariadb-client
 
-# copy the create_db.sh script and set execute permissions
-COPY ./conf/create_db.sh /create_db.sh
-RUN chmod +x /create_db.sh
+RUN mkdir /var/run/mysqld; \
+chmod 777 /var/run/mysqld; \
+{ echo '[mysqld]'; \
+echo 'skip-host-cache'; \
+echo 'skip-name-resolve'; \
+echo 'bind-address=0.0.0.0'; \
+} | tee /etc/my.cnf.d/docker.cnf; \
+sed -i "s|skip-networking|skip-networking=0|g" \
+/etc/my.cnf.d/mariadb-server.cnf
+
+RUN mysql_install_db --user=mysql --datadir=/var/lib/mysql
 
 EXPOSE 3306
 
-ENTRYPOINT ["sh", "/create_db.sh"]
-
-CMD ["mariadbd", "--user=root"]
-# RUN mysql -u root -pYourPassword -e 'use your_database_name'
+COPY ./conf/create_db.sh /create_db.sh
+RUN sh create_db.sh && rm create_db.sh
+USER mysql
+CMD ["/usr/bin/mysqld", "--skip-log-error"]
