@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Cette ligne vérifie si le répertoire /run/mysqld existe
-# en utilisant l'opérateur de test -d.
 if [ ! -d "/run/mysqld" ]; then
     mkdir /run/mysqld;
 fi
@@ -15,14 +13,8 @@ FLUSH PRIVILEGES;
 ALTER USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 EOF
 
-# Install mariadb-client package
-# Uncomment the following line if the package is not installed
-# sudo apt-get install mariadb-client
-
 mariadbd --user=root --bootstrap < /tmp/wp.sql;
 
-# Supprimer le fichier SQL après utilisation
 rm -f /tmp/wp.sql;
 
-# Exécuter les commandes supplémentaires passées en argument
 exec "$@"

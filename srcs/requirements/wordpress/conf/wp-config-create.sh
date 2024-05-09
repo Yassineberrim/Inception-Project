@@ -1,15 +1,13 @@
 #!bin/sh
 
-#download wordpress files using wp-cli
+cd /var/www/html/wordpress
+if [ ! -f "wp-config.php" ]; then
 
-wp core download --allow-root
-
-#create the wordpress cong file wpconfig.php
-wp config create --dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASSWORD --dbhost=mariadb:3306 --allow-root
-
-#install wordpress with provided url
-
-wp core install --url=$Domain --title=$Title --admin_user=$Admin_user --admin_password=$Admin_password --admin_email=$Admin_email --allow-root
-
-#create a mew wordpress 
-wp core install --url=$Domain --title=$Title --admin_user=$Admin_user --admin_password=$Admin_password --admin_email=$Admin_email --allow-root
+#Downloading and extracting Wordpress core files to the current directory
+    wp core download --allow-root
+    wp core config create --dbname=${MYSQL_DATABASE} --dbuser=${MYSQL_USER} --dbpass=${MYSQL_PASSWORD} --dbhost=mariadb --allow-root
+    wp core install --url=${DOMAIN_NAME} --title=DopamInception --admin_user="Admin" --admin_password="1337" --admin_email="yberrim@inception.com" --a
+    # Creating the wp-config.php file using this command.
+    # Installing wordpress using the given environment variables to avoid showing the wordpress installation page everytime we run the containe
+fi    
+exec $@

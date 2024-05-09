@@ -1,63 +1,63 @@
-version: '3'
-
 services:
   nginx:
-    build:
-      context: /home/yberrim/project/srcs/requirements/nginx
-      dockerfile: Dockerfile
     container_name: nginx
     depends_on:
       - wordpress
-    ports:
-      - "443:443"
+    build: /home/yberrim/Inception-Project/srcs/requirements/nginx/
     networks:
       - inception
+    ports:
+      - 443:443
+    env_file:
+      - /home/yberrim/Inception-Project/srcs/.env
     volumes:
-      - ./requirements/nginx/conf/:/etc/nginx/http.d/
-      - ./requirements/nginx/tools:/etc/nginx/ssl/
-      - wp-volume:/var/www/
+      - /home/yberrim/Inception-Project/srcs/requirements/wordpress:/var/www/html/wordpress
     restart: always
 
   mariadb:
     build:
-      context: /home/yberrim/project/srcs/requirements/mariadb
+      context: /home/yberrim/Inception-Project/srcs/requirements/mariadb/
       dockerfile: Dockerfile
     container_name: mariadb
     env_file:
-      - /home/yberrim/project/srcs/.env
+      - /home/yberrim/Inception-Project/srcs/.env
     ports:
       - "3306:3306"
     networks:
       - inception
+    volumes:
+      - db-volume:/var/lib/mysql
     restart: always
 
   wordpress:
     build:
-      context: /home/yberrim/project/srcs/requirements/wordpress
+      context: /home/yberrim/Inception-Project/srcs/requirements/wordpress/
       dockerfile: Dockerfile
     env_file:
-      - /home/yberrim/project/srcs/.env
+      - /home/yberrim/Inception-Project/srcs/.env
     container_name: wordpress
+    ports:
+      - "9000:9000"
     depends_on:
       - mariadb
     restart: always
     networks:
       - inception
     volumes:
-      - wp-volume:/var/www/
+      - wp-volume:/var/www/wordpress
 
 volumes:
   wp-volume:
     driver_opts:
       o: bind
       type: none
-      device: /home/${USER}/data/wordpress
+      device: /home/yberrim/data/wordpress
 
   db-volume:
     driver_opts:
       o: bind
       type: none
-      device: /home/${USER}/data/mariadb
+      device: /home/yberrim/data/mariadb
 
 networks:
   inception:

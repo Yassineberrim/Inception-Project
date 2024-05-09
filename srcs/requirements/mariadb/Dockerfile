@@ -1,26 +1,32 @@
-FROM alpine:3.16
+FROM debian:11-slim
+##FROM alpine:3.19.1
 
-ARG DB_NAME\
-DB_USER\
-DB_PASS
 
-RUN apk update && apk add --no-cache mariadb mariadb-client
+# Update package list and install MariaDB server
+RUN apt-get update -y
+RUN apt-get upgrade -y 
+RUN apt-get install -y mariadb-server 
 
-RUN mkdir /var/run/mysqld; \
-chmod 777 /var/run/mysqld; \
-{ echo '[mysqld]'; \
-echo 'skip-host-cache'; \
-echo 'skip-name-resolve'; \
-echo 'bind-address=0.0.0.0'; \
-} | tee /etc/my.cnf.d/docker.cnf; \
-sed -i "s|skip-networking|skip-networking=0|g" \
-/etc/my.cnf.d/mariadb-server.cnf
 
-RUN mysql_install_db --user=mysql --datadir=/var/lib/mysql
+# Create necessary directories
+RUN mkdir -p /run/mysqld 
+RUN mkdir -p /var/lib/mysql
 
+# Configure MariaDB to listen on all interfaces
+RUN sed -i 's/127.0.0.1/0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf 
+#&& sed -i 's|skip-networking|#skip-networking|g' /etc/mysql/mariadb.cnf
+
+COPY ./conf/create_db.sh /usr/local/bin/create_db.sh
+
+#COPY tools/my.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
+
+RUN chown -R mysql:root /var/run/mysqld
+
+# Make the script executable
+RUN chmod +x /usr/local/bin/create_db.sh
+
+# Expose the MariaDB port
 EXPOSE 3306
 
-COPY ./conf/create_db.sh /create_db.sh
-RUN sh create_db.sh && rm create_db.sh
-USER mysql
-CMD ["/usr/bin/mysqld", "--skip-log-error"]
+# Run the initialization script
+CMD ["sh", "/usr/local/bin/create_db.sh"]
