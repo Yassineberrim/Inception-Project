@@ -1,20 +1,25 @@
 #!/bin/bash
+if [ ! -d "/var/lib/mysql/mysql" ]; then
 
-if [ ! -d "/run/mysqld" ]; then
-    mkdir /run/mysqld;
+        chown -R mysql:mysql /var/lib/mysql
+
+        # init database
+        mysql_install_db --basedir=/usr --datadir=/var/lib/mysql --user=mysql --rpm
+
+        tfile=`mktemp`
+        if [ ! -f "$tfile" ]; then
+                return 1
+        fi
 fi
 
-cat << EOF > /tmp/wp.sql
+cat << EOF > /tmp/mariadb
 FLUSH PRIVILEGES;
-CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
-CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
-GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+CREATE DATABASE IF NOT EXISTS ${MARIADB_DATABASE};
+CREATE USER IF NOT EXISTS '${MARIADB_USER}'@'%' IDENTIFIED BY '${MARIADB_PASSWORD}';
+GRANT ALL PRIVILEGES ON ${MARIADB_DATABASE}.* TO '${MARIADB_USER}'@'%';
 FLUSH PRIVILEGES;
-ALTER USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 EOF
 
-mariadbd --user=root --bootstrap < /tmp/wp.sql;
+mariadbd --user=root --bootstrap < /tmp/mariadb
 
-rm -f /tmp/wp.sql;
-
-exec "$@"
+mariadbd --user=root 

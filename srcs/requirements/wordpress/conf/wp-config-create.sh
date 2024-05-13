@@ -1,13 +1,18 @@
-#!bin/sh
+#!/bin/bash
 
-cd /var/www/html/wordpress
 if [ ! -f "wp-config.php" ]; then
+	mkdir -p /var/www/html/wordpress
+	cd /var/www/html/wordpress
+	wp core download --allow-root
+	wp config create --dbname=$MARIADB_DATABASE --dbuser=$MARIADB_USER --dbpass=$MARIADB_PASSWORD --dbhost=mariadb --allow-root
+	wp core install --url="localhost" --title="Inception" --admin_user="$MARIADB_USER" \
+	--admin_password=$$MARIADB_PASSWORD --admin_email=$MARIADB_EMAIL --skip-email
+	wp user create $MARIADB_ADMIN_USER $MARIADB_EMAIL --role=author --user_pass=$MARIADB_ADMIN_PWD --allow-root
+fi
+    # chmod -R 0777 /var/www/
+    chmod -R 0777 /var/www/html/wordpress
+    chown -R www-data:www-data /var/www/
+    # chmod www-data:www-data /var/www/ /var/www/html/wordpress
 
-#Downloading and extracting Wordpress core files to the current directory
-    wp core download --allow-root
-    wp core config create --dbname=${MYSQL_DATABASE} --dbuser=${MYSQL_USER} --dbpass=${MYSQL_PASSWORD} --dbhost=mariadb --allow-root
-    wp core install --url=${DOMAIN_NAME} --title=DopamInception --admin_user="Admin" --admin_password="1337" --admin_email="yberrim@inception.com" --a
-    # Creating the wp-config.php file using this command.
-    # Installing wordpress using the given environment variables to avoid showing the wordpress installation page everytime we run the containe
-fi    
-exec $@
+
+/usr/sbin/php-fpm82 -F

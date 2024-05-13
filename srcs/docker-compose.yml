@@ -11,7 +11,7 @@ services:
     env_file:
       - /home/yberrim/Inception-Project/srcs/.env
     volumes:
-      - /home/yberrim/Inception-Project/srcs/requirements/wordpress:/var/www/html/wordpress
+      - wp-volume:/var/www/html/wordpress
     restart: always
 
   mariadb:
@@ -21,8 +21,8 @@ services:
     container_name: mariadb
     env_file:
       - /home/yberrim/Inception-Project/srcs/.env
-    ports:
-      - "3306:3306"
+    expose:
+      - 3306
     networks:
       - inception
     volumes:
@@ -36,15 +36,15 @@ services:
     env_file:
       - /home/yberrim/Inception-Project/srcs/.env
     container_name: wordpress
-    ports:
-      - "9000:9000"
+    expose:
+      - 9000
     depends_on:
       - mariadb
     restart: always
     networks:
       - inception
     volumes:
-      - wp-volume:/var/www/wordpress
+      - wp-volume:/var/www/html/wordpress
 
 volumes:
   wp-volume:
