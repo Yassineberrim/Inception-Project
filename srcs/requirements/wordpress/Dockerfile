@@ -40,7 +40,6 @@ RUN chmod +x /var/www/html/wp-config-create.sh
 
 WORKDIR /var/www/html
 
-
 EXPOSE 9000
 
 CMD ["sh", "wp-config-create.sh"]

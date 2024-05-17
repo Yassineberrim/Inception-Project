@@ -15,5 +15,5 @@ RUN	openssl req -x509 -newkey rsa:4096 -keyout /etc/nginx/ssl/yberrim.42.fr.key 
 
 COPY	conf/nginx.conf /etc/nginx/http.d/default.conf
 
-# Command to start Nginx
+# Command to start Nginx in Forground
 CMD ["nginx", "-g", "daemon off;"]
